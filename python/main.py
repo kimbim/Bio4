@@ -1,30 +1,11 @@
-from random import random
+from random import random, randint
 from numpy import array
 import plotly as py
 import plotly.figure_factory as ff
+from pso import algorithm
 
 
 makespans = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
-
-class Particle:
-	def __init__(self, problem):
-		self.n, self.m, self.jobs, self.ms_goal, self.fname = problem
-		self.position = self.generate_random_position()
-		self.velocity = self.generate_random_velocity()
-		self.schedule = schedule_builder(problem,list(self.position[:]))
-		self.fitness = self.get_fitness()
-		self.best_fitness = None
-		self.best_position = None
-
-	def generate_random_position(self):
-		return array([int(1000*random())/10 for i in range(1, self.n*self.m+1)])
-
-	def generate_random_velocity(self):
-		return array([int(2000*random()-1000)/10 for i in range(1,self.n*self.m+1)])
-
-	def get_fitness(self):
-		return max([machine[-1][3] for machine in self.schedule])+1
-
 
 def read_data(fname):
 	ms_goal = makespans[fname]
@@ -42,55 +23,6 @@ def read_data(fname):
 		jobs[k+1] = sequence
 	return n, m, jobs, ms_goal, fname
 
-
-
-def schedule_builder(problem,particle):
-	n, m, jobs  = problem[0], problem[1], problem[2]
-	operations = [(i, o[0]) for i in range(1, n+1) for o in jobs[i]]
-	integer_series = [None] * len(particle)
-	sorted_individual = sorted(particle)
-
-	for i in range(1, len(particle)+1):
-		real_number = sorted_individual[i-1]
-		index = particle.index(real_number)
-		particle[index] = None
-		integer_series[index] = i
-
-	jobs_order = [operations[i-1][0] for i in integer_series]
-
-	sequence = []
-	counters = [0]*(n+1)
-
-	for i in jobs_order:
-		sequence.append((i, jobs[i][counters[i]][0], jobs[i][counters[i]][1]))
-		counters[i] += 1
-
-	job_timers = [0]*(n+1)
-	timelines = [[] for x in range(0,m)]
-
-	for operation in sequence:
-		job, machine, duration = operation
-		start = job_timers[job]
-		inserted = False
-		for k, time_slot in enumerate(timelines[machine-1]):
-			if start+duration < time_slot[2]:
-				end = start+duration
-				timelines[machine-1].insert(k, (job, machine, start, end))
-				inserted = True
-				break
-			else:
-				if time_slot[3] > job_timers[job]:
-					start = time_slot[3]
-		if not inserted:
-			end = start + duration
-			timelines[machine-1].append((job,machine,start,end))
-		job_timers[job] = end
-
-	schedule = []
-	for machine in timelines:
-		schedule.append(sorted(machine, key=lambda x: x[2]))
-	return schedule
-
 def gantt(solution):
 	df = []
 	for machine in solution.schedule:
@@ -102,17 +34,35 @@ def gantt(solution):
 			d['Finish'] = '0000-01-01 '+str(task[3]//60).zfill(2)+':'+str(task[3]%60).zfill(2)+':00'
 			df.append(d)
 
-	fig = ff.create_gantt(df, index_col='Resource', title='BioAI', group_tasks=True,
+	fig = ff.create_gantt(df, colors=colors, index_col='Resource', title='BioAI', group_tasks=True,
 		show_colorbar=False, bar_width=0.4, showgrid_x=True, showgrid_y=True)
 
 	py.offline.plot(fig, filename='BioAI')
 
+colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
+				J2  = 'rgb(147, 229, 117)',	# 8 green
+				J3  = 'rgb(118, 146, 228)',	# 15 blue
+				J4  = 'rgb(230, 117, 116)',	# 2 red
+				J5  = 'rgb(185, 118, 228)',	# 18 violet
+				J6  = 'rgb(230, 215, 116)',	# 5 yellow
+				J7  = 'rgb(117, 229, 216)', # 12 turqoise
+				J8  = 'rgb(228, 119, 208)', # 20 pink
+				J9  = 'rgb(179, 230, 116)', # 7 light green
+				J10 = 'rgb(122, 118, 228)', # 16 dark blue
+				J11 = 'rgb(231, 116, 148)', # 1
+				J12 = 'rgb(230, 150, 116)', # 3
+				J13 = 'rgb(212, 230, 116)', # 6
+				J14 = 'rgb(117, 229, 119)', # 9
+				J15 = 'rgb(117, 229, 152)', # 10
+				J16 = 'rgb(117, 229, 184)', # 11
+				J17 = 'rgb(117, 210, 229)', # 13
+				J18 = 'rgb(118, 178, 228)', # 14
+				J19 = 'rgb(153, 118, 228)', # 17
+				J20 = 'rgb(216, 118, 228)') # 19
 
-problem = read_data(1)
+problem = read_data(5)
+solution = algorithm(problem)
+print(solution.fitness)
 
-particle = Particle(problem)
-
-print(particle.schedule)
-
-gantt(particle)
+gantt(solution)
 
