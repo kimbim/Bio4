@@ -21,7 +21,6 @@ class Particle:
 	def get_fitness(self):
 		return max([machine[-1][3] for machine in self.schedule])+1
 
-
 def schedule_builder(problem,particle):
 	n, m, jobs  = problem[0], problem[1], problem[2]
 	operations = [(i, o[0]) for i in range(1, n+1) for o in jobs[i]]

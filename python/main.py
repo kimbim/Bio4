@@ -61,8 +61,10 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 				J20 = 'rgb(216, 118, 228)') # 19
 
 problem = read_data(5)
-solution = algorithm(problem)
-print(solution.fitness)
+pso = algorithm(problem)
+print(pso.fitness)
+gantt(pso)
 
-gantt(solution)
-
+bees_alg = bees(problem)
+print(bees_alg.fitness)
+gantt(bees_alg)
