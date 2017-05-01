@@ -3,6 +3,7 @@ from numpy import array
 import plotly as py
 import plotly.figure_factory as ff
 from pso import algorithm
+from ba import bees
 
 
 makespans = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
@@ -61,9 +62,9 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 				J20 = 'rgb(216, 118, 228)') # 19
 
 problem = read_data(5)
-pso = algorithm(problem)
-print(pso.fitness)
-gantt(pso)
+#pso = algorithm(problem)
+#print(pso.fitness)
+#gantt(pso)
 
 bees_alg = bees(problem)
 print(bees_alg.fitness)
