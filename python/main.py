@@ -71,12 +71,9 @@ problem = read_data(int(sys.argv[1]))
 
 Acs = Acs(problem).algorithm()
 
-print(Acs.makespan)
 gantt(Acs)
 
 
-
-#pso = algorithm(problem)
 #print(pso.fitness)
 #gantt(pso)
 

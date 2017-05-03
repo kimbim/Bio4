@@ -12,7 +12,7 @@ class Acs:
 
 		self.numberOfAnts = 100
 		self.generations = 100
-		self.generationNumber = 100
+		self.generationNumber = 0
 
 		self.ants = []
 
@@ -38,6 +38,10 @@ class Acs:
 				self.graph.localUpdate(ant) #After completion of feasible solution for each ant, perform local pheromone update to encourage exploration
 			self.graph.globalUpdate(currentBestAnt) #Perform global update to evaporate pheromone on edges and increase pheromone on edges from the global best tour
 
+			print("Best makespan: " + str(currentBestAnt.makespan))
+			print("Generation: " + str(self.generationNumber))
 			self.generationNumber += 1
 
 		return currentBestAnt
+
+
