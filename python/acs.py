@@ -6,16 +6,12 @@ class Acs:
 
 	def __init__(self, problem):
 		self.problem = problem
-		self.evaporationFactor = 0 #(1-p) is the evaporation constant for the entire algorithm
-		self.beta = 0.2
-		self.alpha = 0.2
 
-		self.numberOfAnts = 100
+		self.numberOfAnts = 10
 		self.generations = 100
 		self.generationNumber = 0
 
 		self.ants = []
-
 		self.graph = Graph(self.problem)
 
 		for i in range (1,self.numberOfAnts+2): #Iterate x times to make x ants
@@ -24,7 +20,7 @@ class Acs:
 
 	def algorithm(self):
 		currentBestAnt = self.ants[0]
-		while (self.generationNumber<= self.generations): #For 100 generations
+		while (self.generationNumber< self.generations): #For 100 generations
 
 			for ant in self.ants: #For all ants in each generation
 				ant.calculateSolution() #calculate feasible solution for each ant
@@ -36,11 +32,17 @@ class Acs:
 				if ant.makespan < currentBestAnt.makespan:
 					currentBestAnt = ant
 				self.graph.localUpdate(ant) #After completion of feasible solution for each ant, perform local pheromone update to encourage exploration
-			self.graph.globalUpdate(currentBestAnt) #Perform global update to evaporate pheromone on edges and increase pheromone on edges from the global best tour
+			self.graph.globalUpdate(currentBestAnt) #Perform global update to evaporate pheromone on edges and increase pheromone on edges from the global best tour	
 
-			print("Best makespan: " + str(currentBestAnt.makespan))
+
 			print("Generation: " + str(self.generationNumber))
+			print("Best makespan: " + str(currentBestAnt.makespan))
+
 			self.generationNumber += 1
+			for ant in self.ants:
+				if ant != currentBestAnt:
+					ant.reset()
+
 
 		return currentBestAnt
 

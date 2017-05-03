@@ -9,7 +9,7 @@ class Ant:
 		self.n, self.m, self.jobs, self.ms_goal, self.fname = problem
 		self.alpha = 1.0
 		self.beta = 0.2
-		self.q0 = 0.5
+		self.q0 = 0.8
 		self.notVisitedNodes = [] #list of operations/nodes not yet visited by the ant
 		self.tabuNodes = [] # list of operations/nodes that are visited by the ant
 		self.availableNodes = [] #list of operations/nodes that are feasible and available at time t for the ant
@@ -23,6 +23,11 @@ class Ant:
 		for key in self.currentNode.edges: #iterate over all the first operations from each job
 			self.availableNodes.append(self.graph.nodes[key]) #Append these operations to the available operation list
 			self.initialAvailNodes.append(self.graph.nodes[key])
+
+	def reset(self):
+		self.tabuNodes = []
+		self.availableNodes = self.initialAvailNodes
+		self.currentNode = self.graph.nodes[0]
 
 	def calculateSolution(self):
 		while len(self.tabuNodes)<self.problem[0]*self.problem[1]:
