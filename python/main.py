@@ -4,7 +4,7 @@ import plotly as py
 import plotly.figure_factory as ff
 from pso import algorithm
 from ba import bees
-
+import sys
 
 makespans = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
 
@@ -22,7 +22,11 @@ def read_data(fname):
 		for i in range(0,len(line)//2):
 			sequence.append((int(line.pop(0))+1, int(line.pop(0))))
 		jobs[k+1] = sequence
+
+	print(jobs)
+	exit()
 	return n, m, jobs, ms_goal, fname
+
 
 def gantt(solution):
 	df = []
@@ -38,7 +42,7 @@ def gantt(solution):
 	fig = ff.create_gantt(df, colors=colors, index_col='Resource', title='BioAI', group_tasks=True,
 		show_colorbar=False, bar_width=0.4, showgrid_x=True, showgrid_y=True)
 
-	py.offline.plot(fig, filename='BioAI')
+	py.offline.plot(fig, filename='BioAI.html')
 
 colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 				J2  = 'rgb(147, 229, 117)',	# 8 green
@@ -61,8 +65,8 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 				J19 = 'rgb(153, 118, 228)', # 17
 				J20 = 'rgb(216, 118, 228)') # 19
 
-problem = read_data(5)
-#pso = algorithm(problem)
+problem = read_data(int(sys.argv[1]))
+pso = algorithm(problem)
 #print(pso.fitness)
 #gantt(pso)
 

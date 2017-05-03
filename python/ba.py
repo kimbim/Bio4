@@ -1,7 +1,6 @@
 from random import randint
 import numpy as np
 from particle import Particle
-from particle import schedule_builder
 
 PATCH_DECREASE = 0.95
 
@@ -9,6 +8,7 @@ def bees(problem, bees=45, sites=3, elite_sites=1, patch_size=3, elite_bees=7, o
 	population = init_pop(bees, problem)
 	done = False
 	iterations = 0
+	max_iterations = 50
 	while (done == False):
 		next_generation = []
 		patch_size = patch_size*PATCH_DECREASE
@@ -29,7 +29,7 @@ def bees(problem, bees=45, sites=3, elite_sites=1, patch_size=3, elite_bees=7, o
 		population = next_generation
 		print(get_best_sol(population).get_fitness())
 		iterations += 1
-		if iterations == 100:
+		if iterations >= max_iterations:
 			done = True
 	return get_best_sol(population)
 
@@ -52,7 +52,7 @@ def create_neigh_bee(site, patch_size):
 	p = np.concatenate([p[:i],p[j:]])
 	r = randint(0, len(p))
 	p = np.insert(p, r, temp)
-	schedule = schedule_builder(site.problem, list(p))
+	schedule = site.schedule_builder(list(p))
 	site.position = p
 	site.schedule = schedule
 	return site

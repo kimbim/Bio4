@@ -2,22 +2,27 @@ from operator import attrgetter
 from random import random, randint
 import numpy as np
 from particle import Particle
-from particle import schedule_builder
+from ba import get_best_sol
 
 def algorithm(problem):
 
 	population_size = 100
-	max_generations = 100
+	max_generations = 1
 
 	best_global_fitness = None
 	best_global_position = None
 
 	population = [Particle(problem) for k in range(population_size)]
 
+	print(population[0].position)
+	print(population[0].schedule)
+	print("lol")
+
 	parameters = best_global_fitness, best_global_position, max_generations
 
 	for generation in range(max_generations):
 		print("Generation: " + str(generation))
+		print(get_best_sol(population).get_fitness())
 		for particle in population:
 			update(particle, generation, parameters)
 			if particle.fitness <= problem[3]:
@@ -56,7 +61,7 @@ def swap(particle):
 	p = particle.position[:]
 	i = randint(0, len(p)-2)
 	p[i], p[i+1] = p[i+1], p[i]
-	schedule = schedule_builder(particle.problem, list(p))
+	schedule = particle.schedule_builder(list(p))
 	fitness = max([machine[-1][3] for machine in schedule])+1
 	if fitness < particle.fitness:
 		particle.position = p
@@ -68,7 +73,7 @@ def insert(particle):
 	i = randint(0, len(p)-1)
 	p = np.insert(p, randint(0, len(p)-1), p[i])
 	p = np.delete(p, i)
-	schedule = schedule_builder(particle.problem, list(p))
+	schedule = particle.schedule_builder(list(p))
 	fitness = max([machine[-1][3] for machine in schedule])+1
 	if fitness < particle.fitness:
 		particle.position = p
@@ -80,7 +85,7 @@ def inverse(particle):
 	i = randint(0, len(p)-1)
 	j = randint(i, len(p))
 	p[i:j] = p[i:j][::-1]
-	schedule = schedule_builder(particle.problem, list(p))
+	schedule = particle.schedule_builder(list(p))
 	fitness = max([machine[-1][3] for machine in schedule])+1
 	if fitness < particle.fitness:
 		particle.position = p
@@ -95,7 +100,7 @@ def long_distance(particle):
 	p = np.concatenate([p[:i],p[j:]])
 	r = randint(0, len(p))
 	p = np.insert(p, r, temp)
-	schedule = schedule_builder(particle.problem, list(p))
+	schedule = particle.schedule_builder(list(p))
 	fitness = max([machine[-1][3] for machine in schedule])+1
 	if fitness < particle.fitness:
 		particle.position = p
