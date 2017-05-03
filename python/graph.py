@@ -26,24 +26,22 @@ class Graph:
 	def localUpdate(self, ant):
 		currentNode = self.nodes[0] #Current node is set to the dummynode at beginning of each local update
 		for node in ant.tabuNodes: #Iterate over the ant's solution to find the sequence of the operations
-			currentNode.edges[node.operationNumber][0] = (1-self.evaporationFactor)*currentNode.edges[node.operationNumber][0] + self.evaporationFactor*self.initialPheromoneLevel #Update the pheromone level on the edges traversed by the ant
+			currentNode.edges[node.operationNumber] = ((1-float(self.evaporationFactor))*float(currentNode.edges[node.operationNumber][0]) + float(self.evaporationFactor)*float(self.initialPheromoneLevel), currentNode.edges[node.operationNumber][1]) #Update the pheromone level on the edges traversed by the ant
 			currentNode = node #Set the current node to be the next node
 
-	def globalUpdate(self, globalBestTour):
+	def globalUpdate(self, bestAnt):
 		for node in self.nodes: #For all nodes/operations in the graph
-			nodeIndexGlobalBest = globalBestTour.index(node) #Find the index in the globalBestSolution list
-			if nodeIndexGlobalBest != len(globalBestTour): #As long as it is not the last operation
-				nextNodeIndex = nodeIndexGlobalBest + 1 #The next operation's index
-			for i in range(1,self.problem[0]*self.problem[1]+1): #For all edges from the current node
-				if(i in nodes.edges.keys()): #If the edge exists
-					node.edges[i][0] = (1-self.alpha)*node.edges[i][0] + deltaPheromone(i, nextNodeIndex, globalBestTour) #Update the pheromone level on the edge
+			if (node.operationNumber != 0):
+				nodeIndexGlobalBest = bestAnt.tabuNodes.index(node) #Find the index in the globalBestSolution list
+				if nodeIndexGlobalBest != len(bestAnt.tabuNodes): #As long as it is not the last operation
+					nextNodeIndex = nodeIndexGlobalBest + 1 #The next operation's index
+				for i in range(1,self.problem[0]*self.problem[1]+1): #For all edges from the current node
+					if(i in node.edges.keys()): #If the edge exists
+						node.edges[i] = ((1.0-float(self.alpha))*float(node.edges[i][0]) + self.deltaPheromone(i, nextNodeIndex, bestAnt),node.edges[i][1]) #Update the pheromone level on the edge
 
-	def deltaPheromone(self, i, nextNodeIndex, globalBestTour):	#Check if edge is on the global best tour
-		if i == globalBestTour[nextNodeIndex].operationNumber: #If the edge is on the global-best-tour
-			lengthOfBestTour = 0
-			for node in globalBestTour:
-				lengthOfBestTour += node.processingTime
-			return 1/lengthOfBestTour
+	def deltaPheromone(self, i, nextNodeIndex, bestAnt):	#Check if edge is on the global best tour
+		if i == bestAnt.tabuNodes[nextNodeIndex].operationNumber: #If the edge is on the global-best-tour
+			return 1.0/float(bestAnt.makespan)
 		else:
 			return 0
 

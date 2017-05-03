@@ -3,14 +3,10 @@ from numpy import array
 import plotly as py
 import plotly.figure_factory as ff
 from pso import algorithm
-<<<<<<< Updated upstream
 from ba import bees
 import sys
-=======
 from graph import Graph
 from acs import Acs
-
->>>>>>> Stashed changes
 
 makespans = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
 
@@ -29,13 +25,12 @@ def read_data(fname):
 			sequence.append((int(line.pop(0))+1, int(line.pop(0))))
 		jobs[k+1] = sequence
 
-	print(jobs)
-	exit()
 	return n, m, jobs, ms_goal, fname
 
 
 def gantt(solution):
 	df = []
+	#for machine in solution.schedule:
 	for machine in solution.schedule:
 		for task in machine:
 			d = {}
@@ -71,18 +66,20 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 				J19 = 'rgb(153, 118, 228)', # 17
 				J20 = 'rgb(216, 118, 228)') # 19
 
-<<<<<<< Updated upstream
+
 problem = read_data(int(sys.argv[1]))
-=======
-problem = read_data(5)
-#test = Graph(problem)
-test1 = Acs(problem)
-exit()
->>>>>>> Stashed changes
-pso = algorithm(problem)
+
+Acs = Acs(problem).algorithm()
+
+print(Acs.makespan)
+gantt(Acs)
+
+
+
+#pso = algorithm(problem)
 #print(pso.fitness)
 #gantt(pso)
 
-bees_alg = bees(problem)
-print(bees_alg.fitness)
-gantt(bees_alg)
+#bees_alg = bees(problem)
+#print(bees_alg.fitness)
+#gantt(bees_alg)
