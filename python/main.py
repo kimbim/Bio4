@@ -27,7 +27,6 @@ def read_data(fname):
 
 	return n, m, jobs, ms_goal, fname
 
-
 def gantt(solution):
 	df = []
 	#for machine in solution.schedule:
@@ -69,14 +68,12 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 
 problem = read_data(int(sys.argv[1]))
 
-Acs = Acs(problem).algorithm()
+#Acs = Acs(problem).algorithm()
 
-gantt(Acs)
+#gantt(Acs)
 
-
-#print(pso.fitness)
-#gantt(pso)
+pso = algorithm(problem)
+gantt(pso)
 
 #bees_alg = bees(problem)
-#print(bees_alg.fitness)
 #gantt(bees_alg)

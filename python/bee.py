@@ -1,27 +1,25 @@
 from random import random, randint
 from numpy import array
 
-class Particle:
+class Bee:
 
 	#def __repr__(self):
 	#	return str(self.fitness)
 
-	def __init__(self, problem):
+	def __init__(self, problem, position='Default'):
 		self.problem = problem
 		self.n, self.m, self.jobs, self.ms_goal, self.fname = problem
-		self.position = self.generate_random_position()
 		
-		self.velocity = self.generate_random_velocity()
+		if position == 'Default':
+			self.position = self.generate_random_position()
+		else:
+			self.position = position
+
 		self.schedule = self.schedule_builder(list(self.position[:]))
 		self.fitness = self.get_fitness()
-		self.best_fitness = None
-		self.best_position = None
 
 	def generate_random_position(self):
 		return array([randint(0,100) for i in range(1, self.n*self.m+1)])
-
-	def generate_random_velocity(self):
-		return array([randint(-100,100) for i in range(1,self.n*self.m+1)])
 
 	def get_fitness(self):
 		return max([machine[-1][3] for machine in self.schedule])+1

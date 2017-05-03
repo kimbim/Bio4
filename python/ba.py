@@ -1,6 +1,6 @@
 from random import randint
 import numpy as np
-from particle import Particle
+from bee import Bee
 
 PATCH_DECREASE = 0.95
 
@@ -8,7 +8,7 @@ def bees(problem, bees=45, sites=3, elite_sites=1, patch_size=3, elite_bees=7, o
 	population = init_pop(bees, problem)
 	done = False
 	iterations = 0
-	max_iterations = 50
+	max_iterations = 100
 	while (done == False):
 		next_generation = []
 		patch_size = patch_size*PATCH_DECREASE
@@ -21,30 +21,33 @@ def bees(problem, bees=45, sites=3, elite_sites=1, patch_size=3, elite_bees=7, o
 				recruited_bees += other_bees
 			neighborhood = []
 			for j in range(recruited_bees):
-				neighborhood.append(create_neigh_bee(best_sites[i], patch_size))
+				neighborhood.append(create_neigh_bee(best_sites[i], patch_size, problem))
 			next_generation.append(get_best_sol(neighborhood))
 		remaining_bees = bees - sites
 		for j in range(remaining_bees):
 			next_generation.append(create_rand_bee(problem))
+		
+		if best_sites[0].get_fitness() < get_best_sol(next_generation).get_fitness():
+				next_generation.remove(get_best_sol(next_generation))
+				next_generation.append(best_sites[0])
+
 		population = next_generation
-		print(get_best_sol(population).get_fitness())
+		
+		print("Generation: " + str(iterations+1))
+		print("Makespan of best bee: " + str(get_best_sol(population).get_fitness()))
 		iterations += 1
 		if iterations >= max_iterations:
 			done = True
 	return get_best_sol(population)
 
 def init_pop(bees, problem):
-	 return [Particle(problem) for k in range(bees)]
-
-def eval_pop(population):
-	for i in range(len(population)):
-		population[i] = (population[i][0], population[i][0].get_fitness())
+	return [Bee(problem) for k in range(bees)]
 
 def select_best_sites(population, sites):
 	sorted_pop = sorted(population, key=lambda x: x.get_fitness())
 	return sorted_pop[:sites]
 
-def create_neigh_bee(site, patch_size):
+def create_neigh_bee(site, patch_size, problem):
 	p = site.position[:]
 	i = randint(0, len(p)-1)
 	j = randint(i, len(p))
@@ -52,15 +55,15 @@ def create_neigh_bee(site, patch_size):
 	p = np.concatenate([p[:i],p[j:]])
 	r = randint(0, len(p))
 	p = np.insert(p, r, temp)
-	schedule = site.schedule_builder(list(p))
-	site.position = p
-	site.schedule = schedule
-	return site
+	temp = Bee(problem, p)
+	schedule = temp.schedule_builder(list(p))
+	temp.schedule = schedule
+	return temp
 
 def get_best_sol(neighborhood):
 	sorted_pop = sorted(neighborhood, key=lambda x: x.get_fitness())
 	return sorted_pop[0]
 
 def create_rand_bee(problem):
-	return Particle(problem)
+	return Bee(problem)
 

@@ -7,16 +7,12 @@ from ba import get_best_sol
 def algorithm(problem):
 
 	population_size = 100
-	max_generations = 1
+	max_generations = 100
 
 	best_global_fitness = None
 	best_global_position = None
 
 	population = [Particle(problem) for k in range(population_size)]
-
-	print(population[0].position)
-	print(population[0].schedule)
-	print("lol")
 
 	parameters = best_global_fitness, best_global_position, max_generations
 
@@ -25,8 +21,6 @@ def algorithm(problem):
 		print(get_best_sol(population).get_fitness())
 		for particle in population:
 			update(particle, generation, parameters)
-			if particle.fitness <= problem[3]:
-				return particle
 
 	return min(population, key=attrgetter('fitness'))
 
