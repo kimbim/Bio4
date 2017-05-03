@@ -43,7 +43,7 @@ class Graph:
 					nextNodeIndex = nodeIndexGlobalBest + 1 #The next operation's index
 				for i in range(1,self.problem[0]*self.problem[1]+1): #For all edges from the current node
 					if(i in node.edges.keys()): #If the edge exists
-						node.edges[i] = ((1.0-float(self.alpha))*float(node.edges[i][0]) + self.deltaPheromone(i, nextNodeIndex, bestAnt), float(node.edges[i][1])) #Update the pheromone level on the edge
+						node.edges[i] = ((1.0-float(self.alpha))*float(node.edges[i][0]) + 1.05*self.deltaPheromone(i, nextNodeIndex, bestAnt), float(node.edges[i][1])) #Update the pheromone level on the edge
 				else:
 					for j in range(1,self.problem[0]*self.problem[1]+1): #For all edges from the current node
 						if(j in node.edges.keys()): #If the edge exists
@@ -52,7 +52,7 @@ class Graph:
 				nextNodeIndex = 0
 				for k in range(1,self.problem[0]*self.problem[1]+1): #For all edges from the current node
 					if(k in node.edges.keys() and k == nextNodeIndex): #If the edge exists
-						node.edges[k] = ((1.0-float(self.alpha))*float(node.edges[k][0]) + self.deltaPheromone(k, nextNodeIndex, bestAnt), float(node.edges[k][1])) #Update the pheromone level on the edge
+						node.edges[k] = ((1.0-float(self.alpha))*float(node.edges[k][0]) + 1.05*self.deltaPheromone(k, nextNodeIndex, bestAnt), float(node.edges[k][1])) #Update the pheromone level on the edge
 					elif(k in node.edges.keys()):
 						node.edges[k] = ((1.0-float(self.alpha))*float(node.edges[k][0]), float(node.edges[k][1]))
 

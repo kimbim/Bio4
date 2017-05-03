@@ -8,10 +8,10 @@ import sys
 from graph import Graph
 from acs import Acs
 
-makespans = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
+acceptable_values = {1:56, 2:1059, 3:1276, 4:1130, 5:1451, 6:979}
 
 def read_data(fname):
-	ms_goal = makespans[fname]
+	ms_goal = acceptable_values[fname]
 	with open('../Test data/'+str(fname)+'.txt','r') as file:
 		lines = []
 		for line in file:
@@ -29,7 +29,6 @@ def read_data(fname):
 
 def gantt(solution):
 	df = []
-	#for machine in solution.schedule:
 	for machine in solution.schedule:
 		for task in machine:
 			d = {}
@@ -68,12 +67,11 @@ colors = dict(	J1  = 'rgb(230, 183, 116)',	# 4 orange
 
 problem = read_data(int(sys.argv[1]))
 
-#Acs = Acs(problem).algorithm()
+Acs = Acs(problem).algorithm()
+gantt(Acs)
 
-#gantt(Acs)
-
-pso = algorithm(problem)
-gantt(pso)
+#pso = algorithm(problem)
+#gantt(pso)
 
 #bees_alg = bees(problem)
 #gantt(bees_alg)

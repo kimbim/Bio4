@@ -28,46 +28,46 @@ class Particle:
 
 	def schedule_builder(self, position):
 		operations = [(i, o[0]) for i in range(1, self.n+1) for o in self.jobs[i]]
-		integer_series = [None] * len(position)
-		sorted_individual = sorted(position)
+		int_series = [None] * len(position)
+		sorted_ind = sorted(position)
 
 		for i in range(1, len(position)+1):
-			real_number = sorted_individual[i-1]
-			index = position.index(real_number)
+			r_number = sorted_ind[i-1]
+			index = position.index(r_number)
 			position[index] = None
-			integer_series[index] = i
+			int_series[index] = i
 
-		jobs_order = [operations[i-1][0] for i in integer_series]
+		j_order = [operations[i-1][0] for i in int_series]
 
-		sequence = []
+		seq = []
 		counters = [0]*(self.n+1)
 
-		for i in jobs_order:
-			sequence.append((i, self.jobs[i][counters[i]][0], self.jobs[i][counters[i]][1]))
+		for i in j_order:
+			seq.append((i, self.jobs[i][counters[i]][0], self.jobs[i][counters[i]][1]))
 			counters[i] += 1
 
-		job_timers = [0]*(self.n+1)
+		j_timers = [0]*(self.n+1)
 		timelines = [[] for x in range(0,self.m)]
 
-		for operation in sequence:
-			job, machine, duration = operation
-			start = job_timers[job]
+		for operation in seq:
+			j, m, d = operation
+			start = j_timers[j]
 			inserted = False
-			for k, time_slot in enumerate(timelines[machine-1]):
-				if start+duration < time_slot[2]:
-					end = start+duration
-					timelines[machine-1].insert(k, (job, machine, start, end))
+			for k, time_slot in enumerate(timelines[m-1]):
+				if start+d < time_slot[2]:
+					end = start+d
+					timelines[m-1].insert(k, (j, m, start, end))
 					inserted = True
 					break
 				else:
-					if time_slot[3] > job_timers[job]:
+					if time_slot[3] > j_timers[j]:
 						start = time_slot[3]
 			if not inserted:
-				end = start + duration
-				timelines[machine-1].append((job,machine,start,end))
-			job_timers[job] = end
+				end = start + d
+				timelines[m-1].append((j,m,start,end))
+			j_timers[j] = end
 
 		schedule = []
-		for machine in timelines:
-			schedule.append(sorted(machine, key=lambda x: x[2]))
+		for m in timelines:
+			schedule.append(sorted(m, key=lambda x: x[2]))
 		return schedule

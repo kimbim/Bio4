@@ -7,7 +7,7 @@ class Acs:
 	def __init__(self, problem):
 		self.problem = problem
 
-		self.numberOfAnts = 10
+		self.numberOfAnts = 100
 		self.generations = 100
 		self.generationNumber = 0
 
@@ -27,7 +27,7 @@ class Acs:
 				solutionSequence = []
 				for operation in ant.tabuNodes:
 					solutionSequence.append(operation.operationNumber)
-				ant.schedule_builder(self.problem, solutionSequence)
+				ant.schedule_builder(solutionSequence)
 				ant.calculateMakespan()
 				if ant.makespan < currentBestAnt.makespan:
 					currentBestAnt = ant

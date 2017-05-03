@@ -7,9 +7,9 @@ class Ant:
 	def __init__(self, problem, graph):
 		self.problem = problem
 		self.n, self.m, self.jobs, self.ms_goal, self.fname = problem
-		self.alpha = 1.0
+		self.alpha = 0.9
 		self.beta = 0.2
-		self.q0 = 0.8
+		self.q0 = 0.7	
 		self.notVisitedNodes = [] #list of operations/nodes not yet visited by the ant
 		self.tabuNodes = [] # list of operations/nodes that are visited by the ant
 		self.availableNodes = [] #list of operations/nodes that are feasible and available at time t for the ant
@@ -74,53 +74,50 @@ class Ant:
 				self.availableNodes.append(node)
 
 
-	def schedule_builder(self, problem, ant):
-		n, m, jobs, _, _ = problem
-
-		operations = [(i, o[0]) for i in range(1, n+1) for o in jobs[i]]
-
-		integer_series = [None] * len(ant)
-		sorted_individual = sorted(ant)
+	def schedule_builder(self, ant):
+		operations = [(i, o[0]) for i in range(1, self.n+1) for o in self.jobs[i]]
+		int_series = [None] * len(ant)
+		sorted_ind = sorted(ant)
 
 		for i in range(1, len(ant)+1):
-			real_number = sorted_individual[i-1]
-			index = ant.index(real_number)
+			r_number = sorted_ind[i-1]
+			index = ant.index(r_number)
 			ant[index] = None
-			integer_series[index] = i
-		
-		jobs_order = [operations[i-1][0] for i in integer_series]
-		
-		sequence = []
-		counters = [0]*(n+1)
+			int_series[index] = i
 
-		for i in jobs_order:
-			sequence.append((i, jobs[i][counters[i]][0], jobs[i][counters[i]][1]))
+		j_order = [operations[i-1][0] for i in int_series]
+
+		seq = []
+		counters = [0]*(self.n+1)
+
+		for i in j_order:
+			seq.append((i, self.jobs[i][counters[i]][0], self.jobs[i][counters[i]][1]))
 			counters[i] += 1
 
-		job_timers = [0] * (n + 1)
-		timelines = [[] for x in range(0, m)]
+		j_timers = [0]*(self.n+1)
+		timelines = [[] for x in range(0,self.m)]
 
-		for operation in sequence:
-			job, machine, duration = operation
-			start = job_timers[job]
+		for operation in seq:
+			j, m, d = operation
+			start = j_timers[j]
 			inserted = False
-			for k, time_slot in enumerate(timelines[machine-1]):
-				if start + duration < time_slot[2]:
-					end = start + duration
-					timelines[machine-1].insert(k, (job, machine, start, end))
+			for k, time_slot in enumerate(timelines[m-1]):
+				if start+d < time_slot[2]:
+					end = start+d
+					timelines[m-1].insert(k, (j, m, start, end))
 					inserted = True
 					break
 				else:
-					if time_slot[3] > job_timers[job]:
+					if time_slot[3] > j_timers[j]:
 						start = time_slot[3]
 			if not inserted:
-				end = start + duration
-				timelines[machine-1].append((job, machine, start, end))
-			job_timers[job] = end
+				end = start + d
+				timelines[m-1].append((j,m,start,end))
+			j_timers[j] = end
 
 		schedule = []
-		for machine in timelines:
-			schedule.append(sorted(machine, key=lambda x: x[2]))
+		for m in timelines:
+			schedule.append(sorted(m, key=lambda x: x[2]))
 		self.schedule = schedule
 
 	def calculateMakespan(self):
